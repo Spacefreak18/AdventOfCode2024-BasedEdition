@@ -181,8 +181,8 @@ int findxmasatpos(char* puzzle, int row, int col, int pos, int rows, int cols, i
         char word[4];
         word[0] = puzzle[pos];
         word[1] = puzzle[pos - ( rowsize - 1 )];
-        word[2] = puzzle[pos - ( (rowsize*2) - 2 )];
-        word[3] = puzzle[pos - ( ( rowsize*3) - 3 )];
+        word[2] = puzzle[pos - ((rowsize*2) - 2 )];
+        word[3] = puzzle[pos - (( rowsize*3) - 3 )];
         if(checkword(word) > 0)
         {
             ylogd("found xmas diagonally up and right at pos: %i col: %i row %i", pos, col, row);
@@ -248,7 +248,8 @@ int findxmas(Parameters* p, char* puzzle, int rows, int cols, int rowsize, int c
     return xmases;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 
     clock_t start_time = clock();
     Parameters* p = malloc(sizeof(Parameters));
@@ -256,11 +257,11 @@ int main(int argc, char** argv) {
 
     if(p->verbosity_count>0)
     {
-	    y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, "Initializing logs mode: file, logs level: debug");
+        y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, "Initializing logs mode: file, logs level: debug");
     }
     else
     {
-	    y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_INFO, NULL, "Initializing logs mode: file, logs level: info");
+        y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_INFO, NULL, "Initializing logs mode: file, logs level: info");
     }
 
     int a = 0;

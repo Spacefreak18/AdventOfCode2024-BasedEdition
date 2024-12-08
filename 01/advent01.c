@@ -12,16 +12,23 @@
 
 #define PROGNAME "advent01"
 
-int comp (const void * elem1, const void * elem2)
+int comp (const void* elem1, const void* elem2)
 {
     int f = *((int*)elem1);
     int s = *((int*)elem2);
-    if (f > s) return  1;
-    if (f < s) return -1;
+    if (f > s)
+    {
+        return  1;
+    }
+    if (f < s)
+    {
+        return -1;
+    }
     return 0;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 
     clock_t start_time = clock();
 
@@ -30,11 +37,11 @@ int main(int argc, char** argv) {
 
     if(p->verbosity_count>0)
     {
-	y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, "Initializing logs mode: file, logs level: debug");
+        y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, "Initializing logs mode: file, logs level: debug");
     }
     else
     {
-	y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_INFO, NULL, "Initializing logs mode: file, logs level: info");
+        y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_INFO, NULL, "Initializing logs mode: file, logs level: info");
     }
 
     //int sz = 6;
@@ -53,15 +60,15 @@ int main(int argc, char** argv) {
 
     while (fgets(line, sizeof(line), file))
     {
-	size_t sz = split_string(line, "   ", &returnstring);
+        size_t sz = split_string(line, "   ", &returnstring);
 
-	ylogd("split into size %i", sz);
-	ylogd("%i", atoi(returnstring[0]));
-	ylogd("%i", atoi(returnstring[1]));
-	list1[i] = atoi(returnstring[0]);
-	list2[i] = atoi(returnstring[1]);
-	i++;
-	free_string_array(returnstring);
+        ylogd("split into size %i", sz);
+        ylogd("%i", atoi(returnstring[0]));
+        ylogd("%i", atoi(returnstring[1]));
+        list1[i] = atoi(returnstring[0]);
+        list2[i] = atoi(returnstring[1]);
+        i++;
+        free_string_array(returnstring);
     }
     fclose(file);
 
@@ -79,17 +86,17 @@ int main(int argc, char** argv) {
     j = 0;
     for(int i = 0; i < sz; i++)
     {
-    	int b = 0;
-    	for(int j = 0; j < sz; j++)
-    	{
-	    if(list1[i] == list2[j])
-	    {
-	    	b++;
-		ylogd("matched %i %i times", list1[i], b);
-	    }
-    	}
+        int b = 0;
+        for(int j = 0; j < sz; j++)
+        {
+            if(list1[i] == list2[j])
+            {
+                b++;
+                ylogd("matched %i %i times", list1[i], b);
+            }
+        }
 
-    	a = a + (list1[i] * b);
+        a = a + (list1[i] * b);
     }
 
 

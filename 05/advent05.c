@@ -32,7 +32,7 @@ int checkorder(struct _pointer_list* pages, struct _pointer_list* rules)
     bool fail = false;
     while(i < rulessize)
     {
-	size_t sz = split_string(pointer_list_get_at(rules, i), "|", &returnstring);
+        size_t sz = split_string(pointer_list_get_at(rules, i), "|", &returnstring);
         int rule1 = atoi(returnstring[0]);
         int rule2 = atoi(returnstring[1]);
 
@@ -84,7 +84,8 @@ int checkorder(struct _pointer_list* pages, struct _pointer_list* rules)
 }
 
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 
     clock_t start_time = clock();
     Parameters* p = malloc(sizeof(Parameters));
@@ -92,11 +93,11 @@ int main(int argc, char** argv) {
 
     if(p->verbosity_count>0)
     {
-	    y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, "Initializing logs mode: file, logs level: debug");
+        y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, "Initializing logs mode: file, logs level: debug");
     }
     else
     {
-	    y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_INFO, NULL, "Initializing logs mode: file, logs level: info");
+        y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_INFO, NULL, "Initializing logs mode: file, logs level: info");
     }
 
     int a = 0;
@@ -126,46 +127,46 @@ int main(int argc, char** argv) {
     char** returnstring;
     while (fgets(line2, sizeof(line2), file2))
     {
-	    size_t sz = split_string(line2, ",", &returnstring);
-	    int i =0;
+        size_t sz = split_string(line2, ",", &returnstring);
+        int i =0;
 
-            struct _pointer_list * pages_list = o_malloc(sizeof(struct _pointer_list));
-            pointer_list_init(pages_list);
-	    while(i < sz)
-	    {
-	        pointer_list_append(pages_list, returnstring[i]);
-                i++;
-	    }
-	    i = 0;
+        struct _pointer_list * pages_list = o_malloc(sizeof(struct _pointer_list));
+        pointer_list_init(pages_list);
+        while(i < sz)
+        {
+            pointer_list_append(pages_list, returnstring[i]);
+            i++;
+        }
+        i = 0;
 
-            y_log_message(Y_LOG_LEVEL_DEBUG, "checking order of list %i", c);
-            int b = checkorder(pages_list, rules_list);
-            if(b == 0)
+        y_log_message(Y_LOG_LEVEL_DEBUG, "checking order of list %i", c);
+        int b = checkorder(pages_list, rules_list);
+        if(b == 0)
+        {
+            y_log_message(Y_LOG_LEVEL_DEBUG, "list %i is good", c);
+            int h = getmiddle(pages_list);
+            aa = aa + h;
+            a++;
+        }
+        else
+        {
+            y_log_message(Y_LOG_LEVEL_DEBUG, "list %i is bad", c);
+
+            int z = 0;
+            while(z < pointer_list_size(pages_list))
             {
-                y_log_message(Y_LOG_LEVEL_DEBUG, "list %i is good", c);
-                int h = getmiddle(pages_list);
-                aa = aa + h;
-                a++;
+                y_log_message(Y_LOG_LEVEL_DEBUG, "%i", atoi(pointer_list_get_at(pages_list, z)));
+                z++;
             }
-            else
-            {
-                y_log_message(Y_LOG_LEVEL_DEBUG, "list %i is bad", c);
+            int h = getmiddle(pages_list);
+            aaa = aaa + h;
+            a++;
+        }
+        free_string_array(returnstring);
 
-                int z = 0;
-                while(z < pointer_list_size(pages_list))
-                {
-                    y_log_message(Y_LOG_LEVEL_DEBUG, "%i", atoi(pointer_list_get_at(pages_list, z)));
-                    z++;
-                }
-                int h = getmiddle(pages_list);
-                aaa = aaa + h;
-                a++;
-            }
-	    free_string_array(returnstring);
-
-	    pointer_list_clean(pages_list);
-	    o_free(pages_list);
-	    c++;
+        pointer_list_clean(pages_list);
+        o_free(pages_list);
+        c++;
     }
     fclose(file2);
 

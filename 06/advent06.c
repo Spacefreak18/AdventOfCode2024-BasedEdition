@@ -182,7 +182,7 @@ int dopatrol(char* puzzle, int curdir, int pos, int row, int col, int rowsize, b
         }
     }
 
-return loop;
+    return loop;
 }
 
 int dounobstructedpatrol(char* puzzle, int start, int rows, int cols, int rowsize, int colsize)
@@ -276,7 +276,8 @@ int findstart(char* puzzle, int rows, int cols, int rowsize, int colsize)
     return start;
 }
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 
     clock_t start_time = clock();
 
@@ -285,11 +286,11 @@ int main(int argc, char** argv) {
 
     if(p->verbosity_count>0)
     {
-	    y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, "Initializing logs mode: file, logs level: debug");
+        y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_DEBUG, NULL, "Initializing logs mode: file, logs level: debug");
     }
     else
     {
-	    y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_INFO, NULL, "Initializing logs mode: file, logs level: info");
+        y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_INFO, NULL, "Initializing logs mode: file, logs level: info");
     }
 
     int a = 0;
