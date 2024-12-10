@@ -150,6 +150,7 @@ int examinetrails(char* puzzle, int rows, int cols, int rowsize, int colsize, in
 {
     int i =0;
     int summits = 0;
+    int paths = 0;
     int row = 0;
     int col = 0;
     int start = 0;
@@ -166,7 +167,8 @@ int examinetrails(char* puzzle, int rows, int cols, int rowsize, int colsize, in
             int res = checksurroundingtiles(peaks, puzzle, i, row, col, rows, cols, rowsize, 1, 9);
             ylogi("results in %i finishing heads pointer list %i", res, pointer_list_size(peaks));
 
-            //res = pointer_list_size(peaks);
+            paths += res;
+            summits += pointer_list_size(peaks);
 
             for(int e = 0; e < pointer_list_size(peaks); e++)
             {
@@ -174,7 +176,7 @@ int examinetrails(char* puzzle, int rows, int cols, int rowsize, int colsize, in
             }
             pointer_list_clean(peaks);
             o_free(peaks);
-            summits += res;
+
         }
         i++;
         col++;
@@ -188,6 +190,10 @@ int examinetrails(char* puzzle, int rows, int cols, int rowsize, int colsize, in
         }
     }
 
+    if(part2 > 0)
+    {
+        return paths;
+    }
     return summits;
 }
 
@@ -224,11 +230,15 @@ int main(int argc, char** argv)
 
 
 
-    int a = 0;
-    a = examinetrails(str, ROWS, COLS, ROWSIZE, COLSIZE, 1);
+    int a1 = 0;
+    int a2 = 0;
+    a1 = examinetrails(str, ROWS, COLS, ROWSIZE, COLSIZE, 0);
+    a2 = examinetrails(str, ROWS, COLS, ROWSIZE, COLSIZE, 1);
 
+    free(str);
     free(p);
-    ylogi("Found a total score of %i for entire map", a);
+    ylogi("Found a total score of %i for entire map", a1);
+    ylogi("Found a total rating of %i for entire map", a2);
     double elapsed_time = (double)(clock() - start_time) / CLOCKS_PER_SEC;
     ylogi("time : %f", elapsed_time);
     y_close_logs();
