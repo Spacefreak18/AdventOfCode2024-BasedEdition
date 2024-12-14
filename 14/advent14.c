@@ -19,7 +19,6 @@
 #define ROWSIZE 101
 #define COLSIZE 50
 #define ROBOTS 500
-#define SECONDS 100
 //#define ROWS 7
 //#define COLS 11
 //#define ROWSIZE 11
@@ -27,10 +26,41 @@
 //#define ROBOTS 12
 //#define SECONDS 5
 
+void resetgrid(char grid[ROWS*COLS])
+{
+
+    for(int i = 0; i < ROWS*COLS; i++)
+    {
+        grid[i] = '-';
+    }
+}
+
+void printgrid(char grid[ROWS*COLS])
+{
+    printf("\n");
+    printf("\n");
+    int i = 0;
+    int j = 0;
+    while(i < ROWS*COLS)
+    {
+        while(j < COLS)
+        {
+            printf("%c", grid[i]);
+            j++;
+            i++;
+        }
+        j=0;
+        printf("\n");
+    }
+    printf("\n");
+    printf("\n");
+    //sleep(2);
+}
+
 
 int robotstats[ROBOTS][4];
-
-
+int robots[ROBOTS];
+char grid[ROWS*COLS];
 int main(int argc, char** argv)
 {
 
@@ -105,69 +135,88 @@ int main(int argc, char** argv)
         robot++;
     }
 
+    for(int robot = 0; robot < ROBOTS; robot++)
+    {
+        int st1 = robotstats[robot][0];
+        int st2 = robotstats[robot][1];
+        int pos = st1 * ROWSIZE;
+        pos = pos + (st2);
+        robots[robot] = pos;
+    }
 
+    int seconds = 100;
+    if(p->part2 > 0)
+    {
+        seconds = 10000;
+    }
+    resetgrid(grid);
+    printgrid(grid);
+    for(int second = 1; second <= seconds; second++)
+    {
+        resetgrid(grid);
+        q1=0;
+        q2=0;
+        q3=0;
+        q4=0;
         for(int robot = 0; robot < ROBOTS; robot++)
         {
-            int st1 = robotstats[robot][0];
-            int st2 = robotstats[robot][1];
-            int pos = st1 * ROWSIZE;
-            pos = pos + (st2);
+
+            int pos = robots[robot];
 
             int vx = robotstats[robot][2];
             int vy = robotstats[robot][3];
+            int row = pos / ROWSIZE;
+            int col = pos % ROWSIZE;
+            row = row + vx;
+            col = col + vy;
 
-            ylogd("this robot is starting at %i,%i and will move %i,%i each second", st1, st2, vx, vy);
+            if(col >= COLS)
+            {
+                col = col-COLS;
+            }
+            if(col < 0)
+            {
+                col = COLS+col;
+            }
 
-                for(int i = 1; i <= SECONDS; i++)
-                {
+            if(row >= ROWS)
+            {
+                row = row-ROWS;
+            }
+            if(row < 0)
+            {
+                row = ROWS+row;
+            }
 
-                    int row = pos / ROWSIZE;
-                    int col = pos % ROWSIZE;
-                    row = row + vx;
-                    col = col + vy;
+            pos = (row * ROWSIZE) + col;
+            robots[robot] = pos;
+            grid[pos] = '#';
 
-                    if(col >= COLS)
-                    {
-                        col = col-COLS;
-                    }
-                    if(col < 0)
-                    {
-                        col = COLS+col;
-                    }
-
-                    if(row >= ROWS)
-                    {
-                        row = row-ROWS;
-                    }
-                    if(row < 0)
-                    {
-                        row = ROWS+row;
-                    }
-
-                    pos = (row * ROWSIZE) + col;
-                    ylogd("finish pos is %i", pos);
-
-                }
-
-                int row = pos / ROWSIZE;
-                int col = pos % ROWSIZE;
-                ylogd("robot %i is at pos %i row %i col %i %i %i", robot, pos, row, col, ROWS/2, COLS/2);
-                if(row < ROWS/2 && col < COLS/2)
-                {
-                    q1++;
-                }
-                if(row > ROWS/2 && col < COLS/2)
-                {
-                    q3++;
-                }
-                if(row < ROWS/2 && col > COLS/2)
-                {
-                    q2++;
-                }
-                if(row > ROWS/2 && col > COLS/2)
-                {
-                    q4++;
-                }
+            if(row < ROWS/2 && col < COLS/2)
+            {
+                q1++;
+            }
+            if(row > ROWS/2 && col < COLS/2)
+            {
+                q3++;
+            }
+            if(row < ROWS/2 && col > COLS/2)
+            {
+                q2++;
+            }
+            if(row > ROWS/2 && col > COLS/2)
+            {
+                q4++;
+            }
+        }
+        if(p->part2 > 0)
+        {
+            if(second % 12 == 1)
+            {
+                printf("\n\n\n--------------------------------------------------SECOND %i----------------------------------------------\n\n\n", second);
+                printgrid(grid);
+            }
+        }
     }
 
     free(p);
