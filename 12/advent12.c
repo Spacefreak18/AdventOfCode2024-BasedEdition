@@ -17,10 +17,18 @@
 //#define COLS 59
 //#define ROWSIZE 59
 //#define COLSIZE 15
+//#define ROWS 6
+//#define COLS 6
+//#define ROWSIZE 6
+//#define COLSIZE 6
 //#define ROWS 10
 //#define COLS 10
 //#define ROWSIZE 10
 //#define COLSIZE 10
+//#define ROWS 4
+//#define COLS 5
+//#define ROWSIZE 5
+//#define COLSIZE 4
 #define ROWS 140
 #define COLS 140
 #define ROWSIZE 140
@@ -128,7 +136,7 @@ int checksurroundingtiles(struct _pointer_list* peaks, char* puzzle, int pos, in
     return n;
 }
 
-int checkcell(int pos, char* puzzle)
+int cellperimetercheck(int pos, char* puzzle)
 {
     int row = pos / ROWSIZE;
     int col = pos % ROWSIZE;
@@ -200,11 +208,176 @@ uint64_t calcperimeter(struct _pointer_list* p, char* puzzle)
         ylogd("%s", temp);
         int pos = strtoul(temp, NULL, 10);
 
-        perimeter = perimeter + checkcell(pos, puzzle);
+        perimeter = perimeter + cellperimetercheck(pos, puzzle);
     }
 
 
     return perimeter;
+}
+
+int celledgecheck(int pos, char* puzzle)
+{
+    int row = pos / ROWSIZE;
+    int col = pos % ROWSIZE;
+
+    char val = puzzle[pos];
+    ylogi("checking row %i col %i pos %i val %c %i", row, col, pos, val, ROWSIZE);
+
+    int edges = 0;
+
+    // bottom left outer edge
+    if((row == 0 && col == 0))
+    {
+        edges = edges + 1;
+    }
+
+    if(row > 0)
+    {
+        if((puzzle[pos-1] != val || col == 0) && puzzle[pos-ROWSIZE] != val)
+        {
+            edges = edges + 1;
+        }
+    }
+    else
+    {
+        if(col > 0 && puzzle[pos-1] != val)
+        {
+            edges = edges + 1;
+        }
+    }
+    ylogi("edges is %i", edges);
+
+    // bottom right outer edge
+    if(row == 0 && col == COLS-1)
+    {
+        edges = edges + 1;
+    }
+
+    if(row > 0)
+    {
+        if((puzzle[pos+1] != val || col == COLS-1) && puzzle[pos-ROWSIZE] != val)
+        {
+            edges = edges + 1;
+        }
+    }
+    else
+    {
+        if(col < COLS-1 && puzzle[pos+1] != val)
+        {
+            edges = edges + 1;
+        }
+    }
+    ylogi("edges is %i", edges);
+
+    // top right outer edge
+    if(row == ROWS-1 && col == COLS-1)
+    {
+        edges = edges + 1;
+        //if(puzzle[pos-1] == val && puzzle[pos-ROWSIZE] == val && puzzle[pos-ROWSIZE-1] != val)
+        //{
+        //    ylogi("hit");
+        //    edges = edges + 1;
+        //}
+    }
+
+    if(row < ROWS-1)
+    {
+        if((puzzle[pos+1] != val || col == COLS-1) && puzzle[pos+ROWSIZE] != val)
+        {
+            edges = edges + 1;
+        }
+    }
+    else
+    {
+        if(col < COLS-1 && puzzle[pos+1] != val)
+        {
+            edges = edges + 1;
+        }
+    }
+    ylogi("edges is %i", edges);
+
+    // top left outer edge
+    if(row == ROWS-1 && col == 0)
+    {
+        edges = edges + 1;
+    }
+
+    if(row < ROWS-1)
+    {
+        if((puzzle[pos-1] != val || col == 0) && puzzle[pos+ROWSIZE] != val)
+        {
+            edges = edges + 1;
+        }
+    }
+    else
+    {
+        if(col > 0 && puzzle[pos-1] != val)
+        {
+            edges = edges + 1;
+        }
+    }
+    ylogi("edges is %i", edges);
+
+
+
+    // bottom right inner edge
+
+    if(col > 0)
+    {
+    // bottom right inner edge
+    if(row < ROWS-1 && puzzle[pos+ROWSIZE-1] != val && puzzle[pos+ROWSIZE] == val && puzzle[pos-1] == val)
+    {
+        edges = edges + 1;
+    }
+    // top right inner edge
+    if(row > 0 && puzzle[pos-(ROWSIZE+1)] != val && puzzle[pos-ROWSIZE] == val && puzzle[pos-1] == val)
+    {
+        edges = edges + 1;
+    }
+
+
+
+    }
+
+
+
+    if(col < COLS-1)
+    {
+    // top left inner edge
+    if(row > 0 && puzzle[pos-(ROWSIZE-1)] != val && puzzle[pos-ROWSIZE] == val && puzzle[pos+1] == val)
+    {
+        ylogi("top left inner edge %i diagonal %c", pos, puzzle[pos-(ROWSIZE-1)]);
+        edges = edges + 1;
+    }
+
+    // bottom left inner edge
+    if(row < ROWS-1 && puzzle[pos+ROWSIZE+1] != val && puzzle[pos+ROWSIZE] == val && puzzle[pos+1] == val)
+    {
+        edges = edges + 1;
+    }
+    }
+
+
+    ylogi("edges is %i", edges);
+
+    return edges;
+}
+
+uint64_t calcsides(struct _pointer_list* p, char* puzzle)
+{
+    uint64_t edges = 0;
+
+    for(int e = 0; e < pointer_list_size(p); e++)
+    {
+        char* temp = pointer_list_get_at(p, e);
+        ylogi("pos %s", temp);
+        int pos = strtoul(temp, NULL, 10);
+
+        edges = edges + celledgecheck(pos, puzzle);
+    }
+
+
+    return edges;
 }
 
 
@@ -240,9 +413,20 @@ uint64_t examineplants(char* puzzle, int rows, int cols, int rowsize, int colsiz
 
             uint64_t area = pointer_list_size(peaks);
             totarea = totarea + area;
-            uint64_t peri = calcperimeter(peaks, puzzle);
 
-            uint64_t subprice = peri * area;
+            uint64_t subprice = 0;
+            if(part2 > 0)
+            {
+                uint64_t sides = calcsides(peaks, puzzle);
+                subprice = sides * area;
+                ylogi("found %c list of area %llu and sides %llu price %llu", puzzle[i], area, sides, subprice);
+            }
+            else
+            {
+                uint64_t peri = calcperimeter(peaks, puzzle);
+                subprice = peri * area;
+            }
+
             price = price + subprice;
 
             //ylogi("found %c list of area %llu and perimeter %llu price %llu", puzzle[i], pointer_list_size(peaks), peri, subprice);
@@ -292,12 +476,13 @@ int main(int argc, char** argv)
         y_init_logs(PROGNAME, Y_LOG_MODE_CONSOLE, Y_LOG_LEVEL_INFO, NULL, "Initializing logs mode: file, logs level: info");
     }
 
-    //char* str = fileslurp("simple.txt");
+    //char* str = fileslurp("tempsimple4.txt");
+    //char* str = fileslurp("tempsimple3.txt");
     //char* str = fileslurp("advent12sample.txt");
     char* str = fileslurp("advent12.txt");
 
     uint64_t a1 = 0;
-    a1 = examineplants(str, ROWS, COLS, ROWSIZE, COLSIZE, 0);
+    a1 = examineplants(str, ROWS, COLS, ROWSIZE, COLSIZE, p->part2);
 
     ylogi("total cost is %llu", a1);
 
